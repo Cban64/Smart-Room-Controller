@@ -28,6 +28,9 @@ Adafruit_BME280 bme;
 float varTempC;
 float varTempF;
 int status;
+const int photoPin = A3;
+int photoVal;
+ 
 
 //buttons
 //OneButton button1 (buttonPin, false,false);// create object
@@ -57,8 +60,9 @@ void setup() {
   
   status = bme.begin(0x76);
   if(status==false){
-    Serial.printf("failed to open BME");
+    Serial.printf("failed to open BME"); 
   }
+  pinMode(photoPin, INPUT);
 } //end setup
 
 void loop() {
@@ -67,7 +71,15 @@ void loop() {
  
   //print temperature values to OLED
   showTemp();    // Draw 'stylized' characters
-  
+  //Read photo
+  readPhoto ();
+}
+
+void readPhoto (){
+  //over 300/daylight 1-100/evening
+  //daylight=brightwhite  eveining=brightorange
+  photoVal = analogRead(photoPin);
+ Serial.printf("photoVal = %i \n",photoVal);  
 }
 
 void showTemp(){    // Draw 'stylized' characters
