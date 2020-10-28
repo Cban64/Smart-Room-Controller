@@ -27,7 +27,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 Adafruit_BME280 bme;
 float varTempC;
 float varTempF;
-int status;
+int bmeStatus;
 const int photoPin = A3;
 int photoVal;
  
@@ -46,12 +46,29 @@ int encoderVal;
 Encoder myEnc(pinA,pinB);
 
 EthernetClient client;
+bool ethernetStatus;
 
 void setup() {
   // Intialize:diode,encoder,onebutton
   //BME,and OLED
-
   Serial.begin(9600);
+  pinMode(10, OUTPUT);
+  digitalWrite(10, HIGH); 
+  //Start ethernet connection
+  ethernetStatus = Ethernet.begin(mac);
+  if (!ethernetStatus) {
+    Serial.println("failed to configure Ethernet using DHCP");
+    //no point in continueing 
+    while(1);
+    }
+  //print your local IP address
+  Serial.print("My IP address:");
+  for (byte thisbyte = 0; thisbyte < 4; thisbyte++) {
+    //print value of each byte of the IP address
+    Serial.print(Ethernet.localIP()[thisbyte], DEC);
+    if (thisbyte < 3) Serial.print(".");
+    }
+  
 
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x32
@@ -67,8 +84,8 @@ void setup() {
   // Clear the buffer
   display.clearDisplay();  
   
-  status = bme.begin(0x76);
-  if(status==false){
+  bmeStatus = bme.begin(0x76);
+  if(bmeStatus==false){
     Serial.printf("failed to open BME"); 
   }
   pinMode(photoPin, INPUT);
