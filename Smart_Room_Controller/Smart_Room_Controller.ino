@@ -28,16 +28,22 @@ Adafruit_BME280 bme;
 float varTempC;
 float varTempF;
 int bmeStatus;
+
+//Photo Diode
+const int lavaLamp = 0; //used in place of circadian lamp
 const int photoPin = A3;
 int photoVal;
  
 
 //buttons
-bool buttonState;
+bool buttonStateBlue;
+bool buttonStateRed;
 const int buttonPinBlue = 5;
 const int buttonPinRed = 6;
 OneButton buttonBlue (buttonPinBlue, false,false);// create object
 OneButton buttonRed (buttonPinRed, false,false);// create object
+const int coffeePot = 2;
+const int whiteFan = 1;
 
 //Encoder
 const int pinA = 23;
@@ -99,6 +105,7 @@ void setup() {
 
 void loop() {
   buttonBlue.tick();
+  
   buttonRed.tick();
   //Automatic fnx: diode/encoder
   //For lighting control
@@ -114,10 +121,18 @@ void readEncoder(){
   Serial.printf("encoderVal = %i \n",encoderVal); 
 }
 void readPhoto (){
-  //over 300/daylight 1-100/evening
-  //daylight=brightwhite  eveining=brightorange
+  //Over 15 circadian/lava lamp = off
+  //Between 0-15 circadian/lava lamp = on
   photoVal = analogRead(photoPin);
- Serial.printf("photoVal = %i \n",photoVal);  
+ Serial.printf("photoVal = %i \n",photoVal);
+ if(photoVal<20) {
+  switchON(lavaLamp);
+ }
+  else{
+  switchOFF(lavaLamp);
+ }
+ 
+   
 }
 
 void showTemp(){    // Draw 'stylized' characters
@@ -140,11 +155,25 @@ void showTemp(){    // Draw 'stylized' characters
 
   //Manual fnx: wemos/2buttons
   //comfort items (coffee/fan for demo)
-  void clickBlue(){
-   Serial.println("clickBlue"); 
+  void clickBlue(){   
+    buttonStateBlue=!buttonStateBlue;
+    Serial.printf ("click val = %i\n",buttonStateBlue); 
+   if (buttonStateBlue==true){
+    switchON(whiteFan);
+   }
+   else{
+    switchOFF (whiteFan);
+   }
   }
-  void clickRed(){
-    Serial.println("clickRed");
+  void clickRed(){    
+    buttonStateRed=!buttonStateRed;
+    Serial.printf ("click val = %i\n",buttonStateRed); 
+    if (buttonStateRed==true){
+      switchON (coffeePot);
+    }
+    else{
+      switchOFF (coffeePot);
+    }
   }
   
   
