@@ -33,8 +33,17 @@ int photoVal;
  
 
 //buttons
-//OneButton button1 (buttonPin, false,false);// create object
 bool buttonState;
+const int buttonPinBlue = 5;
+const int buttonPinRed = 6;
+OneButton buttonBlue (buttonPinBlue, false,false);// create object
+OneButton buttonRed (buttonPinRed, false,false);// create object
+
+//Encoder
+const int pinA = 23;
+const int pinB= 22;
+int encoderVal;
+Encoder myEnc(pinA,pinB);
 
 EthernetClient client;
 
@@ -63,18 +72,29 @@ void setup() {
     Serial.printf("failed to open BME"); 
   }
   pinMode(photoPin, INPUT);
+  
+  pinMode(buttonPinBlue,INPUT);
+  pinMode(buttonPinRed,INPUT);
+  buttonBlue.attachClick(clickBlue);
+  buttonRed.attachClick(clickRed);
 } //end setup
 
 void loop() {
+  buttonBlue.tick();
+  buttonRed.tick();
   //Automatic fnx: diode/encoder
   //For lighting control
  
   //print temperature values to OLED
-  showTemp();    // Draw 'stylized' characters
+ // showTemp();    // Draw 'stylized' characters
   //Read photo
-  readPhoto ();
+  //readPhoto ();
+  readEncoder();
 }
-
+void readEncoder(){
+  encoderVal = myEnc.read();
+  Serial.printf("encoderVal = %i \n",encoderVal); 
+}
 void readPhoto (){
   //over 300/daylight 1-100/evening
   //daylight=brightwhite  eveining=brightorange
@@ -102,4 +122,11 @@ void showTemp(){    // Draw 'stylized' characters
 
   //Manual fnx: wemos/2buttons
   //comfort items (coffee/fan for demo)
+  void clickBlue(){
+   Serial.println("clickBlue"); 
+  }
+  void clickRed(){
+    Serial.println("clickRed");
+  }
+  
   
