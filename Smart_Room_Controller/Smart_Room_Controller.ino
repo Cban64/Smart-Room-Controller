@@ -59,6 +59,8 @@ const int hueLampOne = 1;
 const int hueLampTwo = 2;
 const int hueLampThree = 3;
 const int hueLampFour = 4;
+bool Hueon;
+int HueBright = 250;
 
 EthernetClient client;
 bool ethernetStatus;
@@ -111,13 +113,13 @@ void setup() {
   pinMode(pinSw,INPUT);
   buttonBlue.attachLongPressStart(clickBlue);
   buttonRed.attachLongPressStart(clickRed);
-  buttonSw.attachLongPressStart(clickSw);
+  buttonSw.attachClick(clickSw);
 } //end setup
 
 void loop() {
-  buttonBlue.tick();
-  
+  buttonBlue.tick();  
   buttonRed.tick();
+  buttonSw.tick();
   //Automatic fnx: diode/encoder
   //For lighting control
  
@@ -127,27 +129,27 @@ void loop() {
   readPhoto ();
   readEncoder();
   if (encoderButtonState==true){
-      switchON (hueLampOne);
-      switchON (hueLampTwo);
-      switchON (hueLampThree);
-      switchON (hueLampFour); 
+      setHue (hueLampOne,true,HueYellow,HueBright);
+      setHue (hueLampTwo,true,HueYellow,HueBright);
+      setHue (hueLampThree,true,HueYellow,HueBright);
+      setHue (hueLampFour,true,HueYellow,HueBright); 
     }
     else{
-      switchOFF (hueLampOne);
-      switchOFF (hueLampTwo);
-      switchOFF (hueLampThree);
-      switchOFF (hueLampFour);       
+      setHue (hueLampOne,false,0,0);
+      setHue (hueLampTwo,false,0,0);
+      setHue (hueLampThree,false,0,0);
+      setHue (hueLampFour,false,0,0);       
     }
 }
 void readEncoder(){
   encoderVal = myEnc.read();
-  Serial.printf("encoderVal = %i \n",encoderVal); 
+  //Serial.printf("encoderVal = %i \n",encoderVal); 
 }
 void readPhoto (){
   //Over 15 circadian/lava lamp = off
   //Between 0-15 circadian/lava lamp = on
   photoVal = analogRead(photoPin);
- Serial.printf("photoVal = %i \n",photoVal);
+ //Serial.printf("photoVal = %i \n",photoVal);
  if(photoVal<20) {
   switchON(lavaLamp);
  }
@@ -171,16 +173,16 @@ void showTemp(){    // Draw 'stylized' characters
   display.setCursor(3,0);             // Start at top-left corner      
   display.printf("Temp \n\n"); 
   display.printf("%0.2f \n",varTempF);  
-  Serial.printf("Temp = %0.2f \n",varTempF);   
+  //Serial.printf("Temp = %0.2f \n",varTempF);   
   display.display();
-  delay(2000);
+  
 }
 
   //Manual fnx: wemos/2buttons
   //comfort items (coffee/fan for demo)
   void clickBlue(){   
     buttonStateBlue=!buttonStateBlue;
-    Serial.printf ("click blueval = %i\n",buttonStateBlue); 
+    //Serial.printf ("click blueval = %i\n",buttonStateBlue); 
    if (buttonStateBlue==true){
     switchON(whiteFan);
    }
@@ -190,7 +192,7 @@ void showTemp(){    // Draw 'stylized' characters
   }
   void clickRed(){    
     buttonStateRed=!buttonStateRed;
-    Serial.printf ("click redval = %i\n",buttonStateRed); 
+   //Serial.printf ("click redval = %i\n",buttonStateRed); 
     if (buttonStateRed==true){
       switchON (coffeePot);
     }
@@ -200,7 +202,7 @@ void showTemp(){    // Draw 'stylized' characters
   }
   void clickSw(){
     encoderButtonState=!encoderButtonState;
-    Serial.printf ("click Swval = %i\n",encoderButtonState);
+    //Serial.printf ("click Swval = %i\n",encoderButtonState);
     
     
   }
