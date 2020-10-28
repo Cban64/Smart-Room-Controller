@@ -46,10 +46,19 @@ const int coffeePot = 2;
 const int whiteFan = 1;
 
 //Encoder
+const int pinR = 16;
+const int pinG = 15;
+const int pinSw = 14;
 const int pinA = 23;
 const int pinB= 22;
 int encoderVal;
+OneButton buttonSw (pinSw, false,false);
 Encoder myEnc(pinA,pinB);
+bool encoderButtonState;
+const int hueLampOne = 1;
+const int hueLampTwo = 2;
+const int hueLampThree = 3;
+const int hueLampFour = 4;
 
 EthernetClient client;
 bool ethernetStatus;
@@ -99,8 +108,10 @@ void setup() {
   
   pinMode(buttonPinBlue,INPUT);
   pinMode(buttonPinRed,INPUT);
+  pinMode(pinSw,INPUT);
   buttonBlue.attachLongPressStart(clickBlue);
   buttonRed.attachLongPressStart(clickRed);
+  buttonSw.attachLongPressStart(clickSw);
 } //end setup
 
 void loop() {
@@ -115,6 +126,18 @@ void loop() {
   
   readPhoto ();
   readEncoder();
+  if (encoderButtonState==true){
+      switchON (hueLampOne);
+      switchON (hueLampTwo);
+      switchON (hueLampThree);
+      switchON (hueLampFour); 
+    }
+    else{
+      switchOFF (hueLampOne);
+      switchOFF (hueLampTwo);
+      switchOFF (hueLampThree);
+      switchOFF (hueLampFour);       
+    }
 }
 void readEncoder(){
   encoderVal = myEnc.read();
@@ -157,7 +180,7 @@ void showTemp(){    // Draw 'stylized' characters
   //comfort items (coffee/fan for demo)
   void clickBlue(){   
     buttonStateBlue=!buttonStateBlue;
-    Serial.printf ("click val = %i\n",buttonStateBlue); 
+    Serial.printf ("click blueval = %i\n",buttonStateBlue); 
    if (buttonStateBlue==true){
     switchON(whiteFan);
    }
@@ -167,13 +190,19 @@ void showTemp(){    // Draw 'stylized' characters
   }
   void clickRed(){    
     buttonStateRed=!buttonStateRed;
-    Serial.printf ("click val = %i\n",buttonStateRed); 
+    Serial.printf ("click redval = %i\n",buttonStateRed); 
     if (buttonStateRed==true){
       switchON (coffeePot);
     }
     else{
       switchOFF (coffeePot);
     }
+  }
+  void clickSw(){
+    encoderButtonState=!encoderButtonState;
+    Serial.printf ("click Swval = %i\n",encoderButtonState);
+    
+    
   }
   
   
