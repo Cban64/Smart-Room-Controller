@@ -60,6 +60,7 @@ const int hueLampTwo = 2;
 const int hueLampThree = 3;
 const int hueLampFour = 4;
 bool Hueon;
+int HueColor = HueYellow;
 int HueBright = 250;
 
 EthernetClient client;
@@ -113,8 +114,7 @@ void setup() {
   pinMode(pinSw,INPUT);
   buttonBlue.attachLongPressStart(clickBlue);
   buttonRed.attachLongPressStart(clickRed);
-  buttonSw.attachLongPressStart(clickHueYellow);
-  buttonSw.attachLongPressStart(clickHueRed);
+  buttonSw.attachLongPressStart(clickPressSw);  
   buttonSw.attachClick(clickSw);
 } //end setup
 
@@ -131,19 +131,13 @@ void loop() {
   readPhoto ();
   readEncoder();
   if (encoderButtonState==true){
-      setHue (hueLampOne,true,HueYellow,HueBright);
-      setHue (hueLampTwo,true,HueYellow,HueBright);
-      setHue (hueLampThree,true,HueYellow,HueBright);
-      setHue (hueLampFour,true,HueYellow,HueBright); 
+      setHue (hueLampOne,true,HueColor,HueBright);
+      setHue (hueLampTwo,true,HueColor,HueBright);
+      setHue (hueLampThree,true,HueColor,HueBright);
+      setHue (hueLampFour,true,HueColor,HueBright); 
     }
     else{
-      if (encoderButtonState==true){
-      setHue (hueLampOne,true,HueRed,HueBright);
-      setHue (hueLampTwo,true,HueRed,HueBright);
-      setHue (hueLampThree,true,HueRed,HueBright);
-      setHue (hueLampFour,true,HueRed,HueBright); 
-      } 
-      else{
+      
       setHue (hueLampOne,false,0,0);
       setHue (hueLampTwo,false,0,0);
       setHue (hueLampThree,false,0,0);
@@ -217,9 +211,17 @@ void showTemp(){    // Draw 'stylized' characters
   }
   void clickSw(){
     encoderButtonState=!encoderButtonState;
-    //Serial.printf ("click Swval = %i\n",encoderButtonState);
-    
+    //Serial.printf ("click Swval = %i\n",encoderButtonState);    
     
   }
+  void clickPressSw() {
+    if(HueColor==HueYellow){
+      HueColor = HueRed;
+    }
+    else{
+      HueColor = HueYellow;
+    }
+    }
+  
   
   
