@@ -53,7 +53,7 @@ const int pinA = 23;
 const int pinB= 22;
 int encoderVal;
 OneButton buttonSw (pinSw, false,false);
-Encoder myEnc(pinA,pinB);
+Encoder myEnc(pinB,pinA);
 bool encoderButtonState;
 const int hueLampOne = 1;
 const int hueLampTwo = 2;
@@ -113,6 +113,8 @@ void setup() {
   pinMode(pinSw,INPUT);
   buttonBlue.attachLongPressStart(clickBlue);
   buttonRed.attachLongPressStart(clickRed);
+  buttonSw.attachLongPressStart(clickHueYellow);
+  buttonSw.attachLongPressStart(clickHueRed);
   buttonSw.attachClick(clickSw);
 } //end setup
 
@@ -135,6 +137,13 @@ void loop() {
       setHue (hueLampFour,true,HueYellow,HueBright); 
     }
     else{
+      if (encoderButtonState==true){
+      setHue (hueLampOne,true,HueRed,HueBright);
+      setHue (hueLampTwo,true,HueRed,HueBright);
+      setHue (hueLampThree,true,HueRed,HueBright);
+      setHue (hueLampFour,true,HueRed,HueBright); 
+      } 
+      else{
       setHue (hueLampOne,false,0,0);
       setHue (hueLampTwo,false,0,0);
       setHue (hueLampThree,false,0,0);
@@ -142,8 +151,14 @@ void loop() {
     }
 }
 void readEncoder(){
-  encoderVal = myEnc.read();
-  //Serial.printf("encoderVal = %i \n",encoderVal); 
+  HueBright = myEnc.read();
+  //Serial.printf("encoderVal = %i \n",encoderVal);
+   if(HueBright<0){  //dont allow to go below 0
+    HueBright=0;  //not bigger than 95
+  }
+  if(HueBright>255){
+    HueBright=255;
+  }
 }
 void readPhoto (){
   //Over 15 circadian/lava lamp = off
